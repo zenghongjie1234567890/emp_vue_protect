@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>regist</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+</head>
+<body>
+<div id="wrap">
+    <div id="top_content">
+        <div id="header">
+            <div id="rightheader">
+                <p>
+                    2022/3/17
+                    <br/>
+                </p>
+            </div>
+            <div id="topheader">
+                <h1 id="title">
+                    <a href="regist.html">员工管理网站注册页</a>
+                </h1>
+            </div>
+            <div id="navigation">
+            </div>
+        </div>
+        <div id="content">
+            <p id="whereami">
+            </p>
+            <h1>
+                注册
+            </h1>
+            <form action="login.html" method="post"  >
+                <table cellpadding="0" cellspacing="0" border="0"
+                       class="form_table">
+                    <tr>
+                        <td valign="middle" align="right">
+                            用户名:
+                        </td>
+                        <td valign="middle" align="left">
+                            <input type="text" class="inputgri" v-model="TUser.username"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle" align="right">
+                            真实姓名:
+                        </td>
+                        <td valign="middle" align="left">
+                            <input type="text" class="inputgri" v-model="TUser.realname"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle" align="right">
+                            密码:
+                        </td>
+                        <td valign="middle" align="left">
+                            <input type="password" class="inputgri" v-model="TUser.password"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle" align="right">
+                            性别:
+                        </td>
+                        <td valign="middle" align="left">
+                            男
+                            <input type="radio" class="inputgri" v-model="TUser.sex" value="男" checked="checked"/>
+                            女
+                            <input type="radio" class="inputgri" v-model="TUser.sex" value="女"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle" align="right">
+                            验证码:
+                        </td>
+                        <td>
+                            <input type="text" class="inputgri" v-model="code"/>
+                        </td>
+                        <td valign="middle" align="left">
+                            <img id="num" :src="url"/>
+                            <a href="javascript:;" @click="changeImg">换一张</a>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    <input type="button" @click="adduser" class="button" value="Submit &raquo;"/>
+                </p>
+            </form>
+        </div>
+    </div>
+    <div id="footer">
+        <div id="footer_bg">
+            赵小屏@520qq.com
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+</body>
+</html>
+
+<script>
+    new Vue({
+        el: "#wrap",
+        data: {
+            url: '',
+            TUser:{
+                sex:'男'
+            },
+            code:'',
+        },
+        created() {
+            this.getImg()
+        },
+        methods: {
+            changeImg() {
+                this.getImg()
+            },
+            getImg() {
+                // URL后面添加随机数通常用于防止客户端（浏览器）缓存页面。 浏览器缓存是基于url进行缓存的，如果页面
+                // 允许缓存，则在一定时间内（缓存时效时间前）再次访问相同的URL，浏览器就不会再次发送请求到服务器端，而是直接从缓存中获取指定资源。
+                axios.get("/user/getImage?time=" + Math.random()).then((res) => {
+                    this.url = res.data
+                })
+            },
+            adduser(){
+                axios.post("/user/register?code="+this.code,this.TUser).then((res)=>{
+                    console.log(res.data)
+                })
+            },
+        }
+    })
+</script>
