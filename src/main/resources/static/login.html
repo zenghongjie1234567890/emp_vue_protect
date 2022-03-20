@@ -13,13 +13,13 @@
         <div id="header">
             <div id="rightheader">
                 <p>
-                    2009/11/20
+                    2022/3/17
                     <br/>
                 </p>
             </div>
             <div id="topheader">
                 <h1 id="title">
-                    <a href="#">main</a>
+                    <a href="#">员工管理网站登录页</a>
                 </h1>
             </div>
             <div id="navigation">
@@ -29,7 +29,7 @@
             <p id="whereami">
             </p>
             <h1>
-                login
+                登录
             </h1>
             <form action="emplist.html" method="post">
                 <table cellpadding="0" cellspacing="0" border="0"
@@ -39,7 +39,7 @@
                             username:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="name"/>
+                            <input type="text" class="inputgri" v-model="user.username"/>
                         </td>
                     </tr>
                     <tr>
@@ -47,24 +47,49 @@
                             password:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="password" class="inputgri" name="pwd"/>
+                            <input type="password" class="inputgri" v-model="user.password"/>
                         </td>
                     </tr>
                 </table>
                 <p>
-                    <input type="submit" class="button" value="Submit &raquo;"/>
+                    <input type="button" @click="loginUser" class="button" value="Submit &raquo;"/>
                     &nbsp;&nbsp;
-                    <a href="">注册</a>
+                    <a href="/regist.html">注册</a>
                 </p>
             </form>
         </div>
     </div>
     <div id="footer">
         <div id="footer_bg">
-            ABC@126.com
+            赵小屏@520qq.com
         </div>
     </div>
 </div>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
 </body>
 </html>
+
+<script>
+    new Vue({
+        el: "#wrap",
+        data:{
+            user:{}
+        },
+        methods:{
+            loginUser(){
+                axios.post("/user/login",this.user).then((res)=>{
+                    if (res.data.state){
+                        // 将用户登录信息放入localStorage key value
+                        localStorage.setItem("user",JSON.stringify(res.data.user))
+                        alert(res.data.msg+",点击跳转到员工列表页面")
+                        location.href="/emplist.html"
+                    }else {
+                        alert(res.data.msg)
+                    }
+                })
+            }
+        }
+    })
+</script>
 

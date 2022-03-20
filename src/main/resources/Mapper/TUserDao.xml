@@ -32,10 +32,15 @@
       registerTime = #{registertime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByName" parameterType="String" resultMap="BaseResultMap">
     select id, username, realname, password, sex, status, registerTime
     from t_user
-    where id = #{id,jdbcType=INTEGER}
+    where realname = #{realname,jdbcType=INTEGER}
+  </select>
+  <select id="selectByUserName" parameterType="String" resultMap="BaseResultMap">
+    select id, username, realname, password, sex, status, registerTime
+    from t_user
+    where username = #{username,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, username, realname, password, sex, status, registerTime

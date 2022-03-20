@@ -43,7 +43,7 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- 指定数据库表 -->
-        <table tableName="t_user"></table>
+        <table tableName="t_emp"></table>
 
         <!-- 有些表的字段需要指定java类型
          <table schema="" tableName="">

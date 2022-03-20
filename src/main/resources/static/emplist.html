@@ -11,14 +11,14 @@
         <div id="header">
             <div id="rightheader">
                 <p>
-                    2009/11/20
+                    2022/3/17
                     <br/>
-                    安全退出
+                    <a href="/login.html" style="text-decoration: none">安全退出</a>
                 </p>
             </div>
             <div id="topheader">
                 <h1 id="title">
-                    <a href="#">main</a>
+                    <a href="#">员工列表</a>
                 </h1>
             </div>
             <div id="navigation">
@@ -28,7 +28,7 @@
             <p id="whereami">
             </p>
             <h1>
-                Welcome!
+                Welcome! {{user.realname}} 用户
             </h1>
             <table class="table">
                 <tr class="table_header">
@@ -99,9 +99,30 @@
     </div>
     <div id="footer">
         <div id="footer_bg">
-            ABC@126.com
+            赵小屏@520qq.com
         </div>
     </div>
 </div>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
 </body>
 </html>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#wrap",
+        data:{
+            user:{}
+        },
+        created(){
+            var userString =localStorage.getItem("user")
+            this.user=JSON.parse(userString)
+            axios.post("/user/getAll").then((res)=>{
+                console.log(res.data)
+            })
+        },
+        methods:{
+
+        }
+    })
+</script>

@@ -94,7 +94,6 @@
 </div>
 <script type="text/javascript" src="js/vue.js"></script>
 <script type="text/javascript" src="js/axios.min.js"></script>
-<script type="text/javascript" src="js/jquery.min.js"></script>
 </body>
 </html>
 
@@ -123,8 +122,14 @@
                 })
             },
             adduser(){
+                // 请求地址中一定要带参数code，不然回报415错误。
                 axios.post("/user/register?code="+this.code,this.TUser).then((res)=>{
-                    console.log(res.data)
+                    if (res.data.state){
+                        alert(res.data.msg+",点击跳转到登录页面");
+                        location.href="/login.html";
+                    }else {
+                        alert(res.data.msg);
+                    }
                 })
             },
         }

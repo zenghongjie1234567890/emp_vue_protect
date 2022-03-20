@@ -11,7 +11,9 @@ public interface TUserDao {
 
     int insert(TUser record);
 
-    TUser selectByPrimaryKey(Integer id);
+    TUser selectByName(String name);
+
+    TUser selectByUserName(String name);
 
     List<TUser> selectAll();
 
