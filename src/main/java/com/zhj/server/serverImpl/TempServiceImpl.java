@@ -1,5 +1,6 @@
 package com.zhj.server.serverImpl;
 
+import com.zhj.Dao.TEmpMapper;
 import com.zhj.bean.TEmp;
 import com.zhj.server.TempService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,31 @@ import java.util.List;
 public class TempServiceImpl implements TempService {
 
     @Autowired
-    TempService tempService;
+    TEmpMapper tEmpMapper;
+
+    @Override
+    public TEmp getOne(Integer id) {
+        return tEmpMapper.selectByPrimaryKey(id);
+    }
 
     @Override
     public List<TEmp> getAllEmp() {
-        List<TEmp> list = tempService.getAllEmp();
+        List<TEmp> list =tEmpMapper.selectAll();
         return list;
+    }
+
+    @Override
+    public void save(TEmp emp) {
+        tEmpMapper.insert(emp);
+    }
+
+    @Override
+    public void delEmp(Integer id) {
+        tEmpMapper.deleteByPrimaryKey(id);
+    }
+
+    @Override
+    public void update(TEmp emp) {
+        tEmpMapper.updateByPrimaryKey(emp);
     }
 }

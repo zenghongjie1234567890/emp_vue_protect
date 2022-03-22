@@ -12,5 +12,13 @@ import java.util.List;
  * @date : 2022-03-20 18:32
  **/
 public interface TempService {
+    TEmp getOne(Integer id);
+
     List<TEmp> getAllEmp();
+
+    void save(TEmp emp);
+
+    void delEmp(Integer id);
+
+    void update(TEmp emp);
 }

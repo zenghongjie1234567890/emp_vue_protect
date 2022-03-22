@@ -1,5 +1,6 @@
 package com.zhj.controller;
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.zhj.bean.TEmp;
 import com.zhj.bean.TUser;
 import com.zhj.server.TUserService;
@@ -7,18 +8,20 @@ import com.zhj.server.TempService;
 import com.zhj.utils.VerifyCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.extern.slf4j.XSlf4j;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * emp_vue_protect
@@ -110,5 +113,81 @@ public class UserController {
         return map;
     }
 
+    /**
+     *  添加新用户
+     */
+    @PostMapping("save")
+    // 图片参数名一定要和前端的一样 @RequestParam("photo")该注解可以用别名，解决前后端命名参数名字不一样
+    public Map<String ,Object> saveEmp(TEmp emp, @RequestParam("photo") MultipartFile multipartFile) throws IOException {
+        log.info("员工信息:"+emp);
+        log.info("图片信息:"+multipartFile.getOriginalFilename());
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            // 头像保存: 保存客户端上传的图像到服务端保存
+            String  newFileName = emp.getName()+ "." + FilenameUtils.getExtension(multipartFile.getOriginalFilename());
+            multipartFile.transferTo(new File("E:\\CodeRoom\\emp_vue_protect\\src\\main\\resources\\static\\photo",newFileName));
+            // 设置头像地址
+            emp.setPath(newFileName);
+            // 保存员工信息
+            tempService.save(emp);
+            map.put("state",true);
+            map.put("msg","员工信息保存成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("state",false);
+            map.put("msg","员工信息保存失败");
+        }
+        return map;
+    }
 
+    /**
+     *  删除一个员工
+     */
+    @DeleteMapping("/del")
+    public Map<String,Object> delEmp(Integer id){
+        HashMap<String, Object> map = new HashMap<>();
+        tempService.delEmp(id);
+        map .put("state",true);
+        map .put("msg","该员工删除成功");
+        return map;
+    }
+
+    /**
+     *  获取一个员工的信息
+     */
+    @GetMapping("/getOne")
+    public TEmp GetOneEmp(Integer id){
+        TEmp one = tempService.getOne(id);
+        return one;
+    }
+
+    /**
+     *  获取一个员工的信息
+     */
+    @PostMapping("/update")
+    // 图片参数名一定要和前端的一样 @RequestParam("photo")该注解可以用别名，解决前后端命名参数名字不一样
+    public Map<String ,Object> updateEmp(TEmp emp, MultipartFile photo) throws IOException {
+        log.info("员工信息:"+emp);
+        HashMap<String, Object> map = new HashMap<>();
+        try {
+            if (photo!=null){
+                log.info("图片信息:"+photo.getOriginalFilename());
+                // 头像保存: 保存客户端上传的图像到服务端保存
+                String  newFileName = emp.getName()+ "." + FilenameUtils.getExtension(photo.getOriginalFilename());
+                photo.transferTo(new File("E:\\CodeRoom\\emp_vue_protect\\src\\main\\resources\\static\\photo",newFileName));
+                // 设置头像地址
+                emp.setPath(newFileName);
+            }
+            // 保存员工信息
+            tempService.update(emp);
+            log.info("员工信息:"+emp);
+            map.put("state",true);
+            map.put("msg","员工信息更新成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            map.put("state",false);
+            map.put("msg","员工信息更新失败");
+        }
+        return map;
+    }
 }

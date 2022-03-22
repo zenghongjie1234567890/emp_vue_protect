@@ -13,7 +13,7 @@
                 <p>
                     2022/3/17
                     <br/>
-                    <a href="/login.html" style="text-decoration: none">安全退出</a>
+                    <button @click="logout" style="font-size: 12px">安全退出</button>
                 </p>
             </div>
             <div id="topheader">
@@ -51,49 +51,21 @@
                         Operation
                     </td>
                 </tr>
-                <tr class="row1">
+                <tr :class="index%2==0?'row1':'row2'" v-for="(emp,index) in empList">
+                    <td>{{emp.id}}</td>
+                    <td>{{emp.name}}</td>
                     <td>
-                        1
+                        <img :src="'/photo/'+emp.path"   style="height: 60px;">
                     </td>
+                    <td>{{emp.salary}}</td>
+                    <td>{{emp.age}}</td>
                     <td>
-                        zhangshan
-                    </td>
-                    <td>
-                        <img src="img/nane.gif" style="height: 60px;">
-                    </td>
-                    <td>
-                        20000
-                    </td>
-                    <td>
-                        20
-                    </td>
-                    <td>
-                        <a href="emplist.html">delete emp</a>&nbsp;<a href="updateEmp.html">update emp</a>
-                    </td>
-                </tr>
-                <tr class="row2">
-                    <td>
-                        2
-                    </td>
-                    <td>
-                        lishi
-                    </td>
-                    <td>
-                        <img src="img/nane.gif" style="height: 60px;">
-                    </td>
-                    <td>
-                        20000
-                    </td>
-                    <td>
-                        20
-                    </td>
-                    <td>
-                        <a href="emplist.html">delete emp</a>&nbsp;<a href="updateEmp.html">update emp</a>
+                        <a @click="del(emp.id)" href="javascript:;">delete emp</a>&nbsp;<a :href="'/updateEmp.html?id='+emp.id">update emp</a>
                     </td>
                 </tr>
             </table>
             <p>
-                <input type="button" class="button" value="Add Employee" onclick="location='addEmp.html'"/>
+                <input type="button" class="button" value="Add Employee" onclick="location.href='addEmp.html'"/>
             </p>
         </div>
     </div>
@@ -112,17 +84,36 @@
     new Vue({
         el: "#wrap",
         data:{
-            user:{}
+            empList:[]
         },
         created(){
             var userString =localStorage.getItem("user")
-            this.user=JSON.parse(userString)
-            axios.post("/user/getAll").then((res)=>{
-                console.log(res.data)
-            })
+            if (userString){
+                this.user=JSON.parse(userString)
+                axios.post("/user/getAll").then((res)=>{
+                    this.empList=res.data.list
+                    console.log(res.data.list)
+                })
+            }else {
+                alert("你尚未登录，点击确定跳转至登录界面！")
+                location.href="/login.html"
+            }
         },
         methods:{
-
+            logout(){
+                localStorage.removeItem("user")
+                location.reload()
+            },
+            del(id){
+                if (window.confirm("是否确定删除该用户？")){
+                    axios.delete("/user/del?id="+id).then((res)=>{
+                        if (res.data.state){
+                            alert(res.data.msg+"，！！")
+                            location.reload()
+                        }
+                    })
+                }
+            }
         }
     })
 </script>

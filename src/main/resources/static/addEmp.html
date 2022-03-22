@@ -39,7 +39,7 @@
                             name:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="name"/>
+                            <input type="text" class="inputgri" v-model="emp.name" name="name"/>
                         </td>
                     </tr>
                     <tr>
@@ -47,7 +47,7 @@
                             photo:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="file" name="photo"/>
+                            <input type="file" ref="myphoto" name="photo"/>
                         </td>
                     </tr>
                     <tr>
@@ -55,7 +55,7 @@
                             salary:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="salary"/>
+                            <input type="text" class="inputgri" v-model="emp.salary" name="salary"/>
                         </td>
                     </tr>
                     <tr>
@@ -63,12 +63,12 @@
                             age:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="age"/>
+                            <input type="text" class="inputgri" v-model="emp.age" name="age"/>
                         </td>
                     </tr>
                 </table>
                 <p>
-                    <input type="submit" class="button" value="Confirm"/>
+                    <input type="button" @click="addEmp" class="button" value="Confirm"/>
                 </p>
             </form>
         </div>
@@ -79,5 +79,45 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
 </body>
 </html>
+<script type="text/javascript">
+    new Vue({
+        el: "#wrap",
+        data: {
+            emp: {}
+        },
+        created() {
+        },
+        methods: {
+            addEmp() {
+                console.log(this.emp)
+                console.log(this.$refs.myphoto.files[0]);
+                // 文件上传时，请求方式必须是post，enctype必须为multipart/form-data
+                var formdata = new FormData()
+                formdata.append("name", this.emp.name);
+                formdata.append("salary", this.emp.salary);
+                formdata.append("age", this.emp.age);
+                formdata.append("photo", this.$refs.myphoto.files[0]);
+                axios({
+                    method: "post",
+                    url: "/user/save",
+                    data: formdata,
+                    headers: {
+                        'content-type': 'multipart.form-data'
+                    }
+                }).then((res) => {
+                    if (res.data.state) {
+                        alert(res.data.msg + ",现在跳转至员工列表页面!")
+                        location.href = "/emplist.html"
+                    } else {
+                        alert(res.data.msg + ",请重新添加员工信息!!")
+                        location.href = "/addEmp.html"
+                    }
+                })
+            }
+        }
+    })
+</script>

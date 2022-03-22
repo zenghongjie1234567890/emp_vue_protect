@@ -38,8 +38,7 @@
                         <td valign="middle" align="right">
                             id:
                         </td>
-                        <td valign="middle" align="left">
-                            1
+                        <td valign="middle" align="left" v-model="emp.id" name="id">{{emp.id}}
                         </td>
                     </tr>
                     <tr>
@@ -47,15 +46,24 @@
                             name:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="name" value="zhangshan"/>
+                            <input type="text" class="inputgri" v-model="emp.name" name="name"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td valign="middle" align="right">
+                            old photo:
+                        </td>
+                        <td valign="middle" align="left">
+                            <img :src="'/photo/'+emp.path" style="height: 60px;">
+                        </td>
+                    </tr>
+                    <tr>
                     <tr>
                         <td valign="middle" align="right">
                             photo:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="file" name="photo"/>
+                            <input type="file"  ref="myphoto" />
                         </td>
                     </tr>
                     <tr>
@@ -63,7 +71,7 @@
                             salary:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="salary" value="20000"/>
+                            <input type="text" class="inputgri" v-model="emp.salary" name="salary"/>
                         </td>
                     </tr>
                     <tr>
@@ -71,12 +79,12 @@
                             age:
                         </td>
                         <td valign="middle" align="left">
-                            <input type="text" class="inputgri" name="age" value="20"/>
+                            <input type="text" class="inputgri" v-model="emp.age" name="age"/>
                         </td>
                     </tr>
                 </table>
                 <p>
-                    <input type="submit" class="button" value="Confirm"/>
+                    <input type="button" @click="updateEmp" class="button" value="Confirm"/>
                 </p>
             </form>
         </div>
@@ -87,5 +95,52 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="js/vue.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
 </body>
 </html>
+
+<script type="text/javascript">
+    new Vue({
+        el: "#wrap",
+        data: {
+            emp:{}
+        },
+        created() {
+            // 取请求地址某字符后面的字符串
+            var start = location.href.lastIndexOf("=")
+            var id = location.href.substring(start + 1)
+            axios.get("/user/getOne?id="+id).then((res)=>{
+                this.emp=res.data
+            })
+        },
+        methods: {
+            updateEmp() {
+                var formdata = new FormData()
+                formdata.append("id", this.emp.id);
+                formdata.append("name", this.emp.name);
+                formdata.append("salary", this.emp.salary);
+                formdata.append("path", this.emp.path);
+                formdata.append("age", this.emp.age);
+                formdata.append("photo", this.$refs.myphoto.files[0]);
+                console.log(formdata)
+                axios({
+                    method: "post",
+                    url: "/user/update",
+                    data: formdata,
+                    headers: {
+                        'content-type': 'multipart.form-data'
+                    }
+                }).then((res) => {
+                    if (res.data.state) {
+                        alert(res.data.msg + ",现在跳转至员工列表页面!")
+                        location.href = "/emplist.html"
+                    } else {
+                        alert(res.data.msg + ",请重新更新员工信息!!")
+                        location.href = "/updateEmp.html"
+                    }
+                })
+            }
+        }
+    })
+</script>

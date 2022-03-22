@@ -1,8 +1,11 @@
-  # 应用服务 WEB 访问端口
+# 应用服务 WEB 访问端口
 server:
   port: 8022
+  # 重要的一行，修改tomcat的吞吐量
+  tomcat:
+    max-swallow-size: 1000MB
 
-  # 连接数据库需要的配置
+    # 连接数据库需要的配置
 spring:
   datasource:
     username: root
@@ -10,17 +13,34 @@ spring:
     url: jdbc:mysql://localhost:3306/empmanagement?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  #  resources:
-  ##    配置静态资源访问的路径 (index.html的文件是默认直接作为首页访问的)  [classpath:/static/HTML/ ]
-  #    static-locations: [classpath:/templates/ ]
 
   #  mvc:
   #    配置静态资源访问的路径前缀,对动态资源没有用，动态资源只看@RequestMapping("/***")里面的路径
   #    static-path-pattern: /res/**
 
-  #指定Mybatis的Mapper文件
-mybatis:
+  servlet: #  设置客户端上传文件的大小限定
+    multipart:
+      enabled: true
+      max-file-size: 150MB
+      max-request-size: 10MB
+  redis:
+    database: 1  # redis数据库索引 (默认为0)
+    port: 6379
+    password: 2020827zhjazyp
+    host: 47.107.229.21
+
+
+mybatis: #指定Mybatis的Mapper文件
   mapper-locations: classpath:/Mapper/*.xml
+  configuration:
+    multiple-result-sets-enabled: true
+
+
+
+
+
+
+
 
 
 
